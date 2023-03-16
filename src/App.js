@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes , Route } from "react-router-dom";
-import ShowProducts from './components/ShowProducts';
+import ShowSites from './components/ShowSites';
 
 function App() {
   return ( 
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ShowProducts></ShowProducts>}></Route>
+        <Route path="/" element={<ShowSites></ShowSites>}></Route>
       </Routes>
     </BrowserRouter>
    );
