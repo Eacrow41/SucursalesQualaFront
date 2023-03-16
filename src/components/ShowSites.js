@@ -4,8 +4,10 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { show_alert } from '../functions';
 const ShowProducts = () => {
-    const url = 'https://localhost:7265/api/sites';
+    const urlS = 'https://localhost:7265/api/sites';
+    const urlM = 'https://localhost:7265/api/currency';
     const [sucursales, setSucursales] = useState([]);
+    const [monedas, setMonedas] = useState([]);
     const [codigo, setCodigo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [direccion, setDireccion] = useState('');
@@ -16,14 +18,20 @@ const ShowProducts = () => {
     const [operation, setOperation] = useState('');
     useEffect(() => {
         getSucursales();
+        getMoneda();
     },[]);
    
 
     const getSucursales = async () => {
-        const respuesta = await axios.get(url);
+        const respuesta = await axios.get(urlS);
         setSucursales(respuesta.data);
     }
     
+    const getMoneda = async () => {
+        const respuestaM = await axios.get(urlM);
+        setMonedas(respuestaM.data);
+    }
+
 
     const openModal = (op, codigo, descripcion, direccion, identificacion, fecha_creacion, moneda) => {
 
@@ -79,14 +87,14 @@ const ShowProducts = () => {
                              direccion:direccion.trim(), identificacion:identificacion.trim(),
                              fecha_creacion:fecha_creacion, moneda:moneda.trim()};
                 metodo = 'POST';
-                url = 'https://localhost:7265/api/sites';
+                url = urlS;
             }
             else {
                 parametros = {codigo:codigo, descripcion: descripcion.trim(), 
                     direccion:direccion.trim(), identificacion:identificacion.trim(),
                     fecha_creacion:fecha_creacion, moneda:moneda.trim()};
                 metodo = 'PUT';
-                url = 'https://localhost:7265/api/sites/'+codigo;
+                url = urlS +'/'+codigo;
             }
             enviarSolicitud(metodo, parametros, url);
         }
@@ -118,7 +126,7 @@ const ShowProducts = () => {
         }).then((result) => {
             if(result.isConfirmed){
                 setCodigo(id);
-                var url = 'https://localhost:7265/api/sites/'+id;
+                var url = urlS + '/' + id;
                 enviarSolicitud('DELETE', {codigo:id}, url );
             }
             else {
@@ -220,7 +228,11 @@ const ShowProducts = () => {
                &nbsp;
                <div className='input-group mb=3'>
                 <span className='input-group-text'><i class="fa-solid fa-dollar-sign"></i></span>
-                <input type='text' id='moneda' className='form-control' placeholder='Moneda' value={moneda} onChange={(e)=> setMoneda(e.target.value)}></input>
+                <select name='monedas'  id='monedas' className='form-control' placeholder='Moneda' value={moneda} onChange={(e)=> setMoneda(e.target.value)}>
+                    {monedas.map(moneda => (
+                        <option key={moneda.nombre} value={moneda.nombre}>{moneda.nombre}</option>
+                    ))}
+                </select>
                </div>
                &nbsp;
                <div className='d-grid cil-6 mx-auto'>
